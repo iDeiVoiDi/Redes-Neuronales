@@ -1,47 +1,71 @@
+#==================================================
+# GUI.UI | Codigo principal donde funciona el juego
+#==================================================
+from pathlib import Path
 import pygame
 
-from config.config import load_config 
+from config.config import load_config
+from GUI.car import Car
 
-def ui_main():
-    config = load_config()
+class Game:
+    '''
+    Pantalla principal del juego
+    '''
+    def __init__(self):
+        config = load_config()
 
-    pygame.init()
-    screen = pygame.display.set_mode((config["WIDTH"], config["HEIGTH"]))
-    clock = pygame.time.Clock()
-    running = True
-    dt = 0
+        # == Parametros base ==
+        pygame.init()
+        pygame.display.set_caption(config["NAME"])
+        width = config["SCREEN_WIDTH"]
+        height = config["SCREEN_HEIGHT"]
+        self.screen = pygame.display.set_mode((width, height))
+        self.clock = pygame.time.Clock()
+        self.ticks = 60
+        self.exit = False
 
-    player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
+    def run(self):
+        ''''
+        Corre la imagen principal del juego
+        '''
+        image_path = Path(__file__).resolve().parent.parent / "assets" / "car.png"
+        config = load_config()
+        ppu = 32
 
-    while running:
-        # poll for events
-        # pygame.QUIT event means the user clicked X to close your window
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+        # == Creacion del Objeto Coche ==
+        car = Car(x=config["SCREEN_CAR_INIT_X"], 
+                  y=config["SCREEN_CAR_INIT_X"], 
+                  image_path=image_path)
 
-        # fill the screen with a color to wipe away anything from last frame
-        screen.fill("purple")
+        # == Bucle Principal | (Imagen) ==
+        while not self.exit:
+            dt = self.clock.get_time() / 1000.0
 
-        pygame.draw.circle(screen, "red", player_pos, 40)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.exit = True
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            player_pos.y -= 300 * dt
-        if keys[pygame.K_s]:
-            player_pos.y += 300 * dt
-        if keys[pygame.K_a]:
-            player_pos.x -= 300 * dt
-        if keys[pygame.K_d]:
-            player_pos.x += 300 * dt
+            pressed = pygame.key.get_pressed()
 
-        # flip() the display to put your work on screen
-        pygame.display.flip()
+            # == Teclas ==
+            accelerate = pressed[pygame.K_UP]
+            reverse = pressed[pygame.K_DOWN]
+            
+            turn_dir = 0
+            if pressed[pygame.K_LEFT]:
+                turn_dir += 1
+            if pressed[pygame.K_RIGHT]:
+                turn_dir -= 1
 
-        # limits FPS to 60
-        # dt is delta time in seconds since last frame, used for framerate-
-        # independent physics.
-        dt = clock.tick(60) / 1000
+            # == Actualizacion del Coche ==
+            car.update(dt, accelerate, reverse, turn_dir)
 
-    pygame.quit()
+            # == Dibujado en pantalla ==
+            self.screen.fill((0, 0, 0))
+            car.draw(self.screen, ppu)
+            pygame.display.flip()
+
+            self.clock.tick(self.ticks)
+
+        pygame.quit()

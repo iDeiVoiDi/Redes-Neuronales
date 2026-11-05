@@ -1,4 +1,5 @@
-from GUI.ui import ui_main
+from GUI.ui import Game
 
-if __name__ == "__main__":
-    ui_main()
+if __name__ == '__main__':
+    game = Game()
+    game.run()

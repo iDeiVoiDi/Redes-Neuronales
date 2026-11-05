@@ -1,7 +1,7 @@
 import json
 import os
 
-# Carga la configuracion
+# == Carga la configuracion ==
 def load_config():
     base_dir = os.path.dirname(__file__)
     file_path = os.path.join(base_dir, "config.json")

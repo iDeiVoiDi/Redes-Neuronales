@@ -1,4 +1,14 @@
 {
-    "WIDTH": 1280,
-    "HEIGTH": 720
+    "NAME": "Redes Neuronales - COCHE",
+    "SCREEN_WIDTH": 1280,
+    "SCREEN_HEIGHT": 720,
+    "SCREEN_CAR_INIT_X": 10,
+    "SCREEN_CAR_INIT_Y": 10,
+
+    "CAR_MAX_SPEED": 8.0,
+    "CAR_ACELERATION": 25.0,
+    "CAR_FRICTION": 15.0,
+    "CAR_TURN_RATE": 200.0,
+    "CAR_WIDTH": 80,
+    "CAR_HEIGHT": 42
 }
